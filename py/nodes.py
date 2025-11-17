@@ -64,8 +64,11 @@ class fot_Workspace:
 
     FUNCTION = "construct_data"
     def construct_data(self, codename=None, codename_override=None, width=640, height=480, **kwargs):
-        # print("fot_Workspace constructing data")
-    
+        print("fot_Workspace constructing data")
+
+        print(f" - width = {width}")
+        print(f" - height = {height}")
+
         actual_codename = codename_override if codename_override is not None else codename
         # print(f" - actual_codename = {actual_codename}")
 
@@ -89,7 +92,7 @@ class fot_Workspace:
             try:
                 with open(workspace_json_filename, 'r') as f:
                     workspace_json_object = json.load(f)
-                print(f" - Loaded existing workspace.json with {len(workspace_json_object)} entries")
+                print(f" - Loaded existing workspace.json")
             except (json.JSONDecodeError, IOError) as e:
                 print(f" - Error loading workspace.json: {e}, creating new one")
         else:
@@ -104,12 +107,14 @@ class fot_Workspace:
             }
             workspace_json_object_tostore = True
 
-        if (not "width" in workspace_json_object) or( width != workspace_json_object["width"]):
-            workspace_json_object["width"] = width
-            workspace_json_object_tostore = True
-        if (not "height" in workspace_json_object) or (height != workspace_json_object["height"]):
-            workspace_json_object["height"] = height
-            workspace_json_object_tostore = True
+        # if (not "width" in workspace_json_object) or (width != workspace_json_object["width"]):
+        print(f" - updating width: {width}")
+        workspace_json_object["width"] = width
+        workspace_json_object_tostore = True
+        # if (not "height" in workspace_json_object) or (height != workspace_json_object["height"]):
+        print(f" - updating height: {height}")
+        workspace_json_object["height"] = height
+        workspace_json_object_tostore = True
 
         if workspace_json_object_tostore:
             try:

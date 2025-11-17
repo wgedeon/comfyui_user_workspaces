@@ -436,8 +436,11 @@ app.registerExtension({
         }
 
         nodeType.prototype.onConfigure = async function (node) {
+            // console.log("this = ", this);
+            // console.log("arguments = ", arguments);
+
             // ensure currently configured value is in list (in case of offline dir clean-up)
-            const widget = node.widgets.find(w => w.name === WIDGET_NAME_WORKSPACE);
+            const widget = this.widgets.find(w => w.name === WIDGET_NAME_WORKSPACE);
             const currentValue = widget.value;
             const workspaces = widget.options.values;
             if (workspaces.includes(currentValue)) {
