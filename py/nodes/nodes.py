@@ -144,12 +144,13 @@ class fot_WorkspaceReadOnly:
             "required": {
             },
             "optional": {
-                "workspace": ("WORKSPACE"),
+                "workspace": ("WORKSPACE",),
                 "codename": (get_wksp_list(), {"default": WORKSPACE_DEFAULT}),
                 "codename_override": ("STRING", {"forceInput": True}),
                 "workspace_hash": ("STRING", {"default": "", "forceInput": False}),
             },
             "hidden": {
+                "ui_features": ("STRING", {"default": "[\"workspace_consumer\",\"workspace_producer\"]"}),
             }
         }
         # for i in range(1, 3):
@@ -222,6 +223,7 @@ class fot_Folder:
             "optional": {
             },
             "hidden": {
+                "ui_features": ("STRING", {"default": "[\"workspace_consumer\",\"workspace_producer\"]"}),
             }
         }
         return inputs
