@@ -258,8 +258,10 @@ class fot_Folder:
         home_dir = folder_paths.get_output_directory() # get_user_directory()
         workspaces_dir = os.path.join(home_dir, 'workspaces')
         workspace_dir = os.path.join(workspaces_dir, codename)
-        path_full = os.path.join(workspace_dir, folder)
-    
+        path_full = os.path.join(os.path.join(workspace_dir, folder), '')
+
+        Path(path_full).mkdir(parents=True, exist_ok=True)
+
         return {"ui": {"workspace": (workspace,), "path_full": (path_full,)}, "result": (workspace, path_full,)}
 
 

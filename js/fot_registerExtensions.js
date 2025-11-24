@@ -169,7 +169,7 @@ const addFolder = async function (app, node, workspace_codename, folder_name) {
 };
 
 const refreshFolders = async function (app, node) {
-    // console.log("refreshFolders, node: ", node.id);
+    console.log("refreshFolders, node: ", node.id);
     // Find the folder widget and change it to dropdown
     const folderWidget = node.widgets.find(w => w.name === WIDGET_NAME_FOLDER);
     if (folderWidget && folderWidget.type !== "combo") {
@@ -508,7 +508,8 @@ app.registerExtension({
             if (DEBUG) console.log("(", this.id, " : ",this.type,") onConfigure: will set node.onWorkspaceUpdated");
             // const fullNode = app.graph.getNodeById(node.id);
             this.onWorkspaceUpdated = async (node) => {
-                await refreshFolders(app, node);
+                if (DEBUG) console.log("(", node.id, " : ",node.type,") workspace updated will refresh folders");
+                setTimeout( () => { refreshFolders(app, node); }, 500);
             }
 
             this.addCustomWidget({

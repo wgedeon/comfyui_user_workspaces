@@ -7,7 +7,7 @@ export const is_workspace_producer = function (app, node_type) {
 }
 
 export const findUpstreamWorkspace = async function (app, node) {
-    const DEBUG = false;
+    const DEBUG = true;
     if (DEBUG) console.log("[", node.id, "] findUpstreamWorkspace:");
     if (DEBUG) console.log("[", node.id, "]   - node: ", node);
     
@@ -24,11 +24,6 @@ export const findUpstreamWorkspace = async function (app, node) {
     else {
         if (DEBUG) console.log("[", node.id, "]   > workspace input slot: ", slotIndex);
     }
-    // const inputLink = node.getInputLink(slotIndex);
-    // if (!inputLink) {
-    //     if (DEBUG) console.log("[", node.id, "]   > workspace input slot not connected");
-    //     return node;
-    // }
 
     // if (DEBUG) console.log("[", node.id, "]   > workspace links to ", inputLink.origin_id);
     const upstreamNodeIdOrNode = node.getInputNode(slotIndex);
@@ -42,7 +37,24 @@ export const findUpstreamWorkspace = async function (app, node) {
             upstreamNode = upstreamNodeIdOrNode;
         }
     }
-    else return;
+    else {
+        // try the link route
+        const inputLink = node.getInputLink(slotIndex);
+    if (DEBUG) console.log("[", node.id, "]   > inputLink: ", inputLink);
+        if (!inputLink) {
+            if (DEBUG) console.log("[", node.id, "]   > workspace input slot not connected (no input link)");
+            // if workspace?
+            return node;
+        }
+        else {
+            upstreamNode = node.graph.getNodeById(inputLink.origin_id);
+            if (upstreamNode === undefined) {
+                if (DEBUG) console.log("[", node.id, "]   > workspace input slot not connected (no upstream node)");
+                // if workspace?
+                return node;
+            }
+        }
+    }
     if (DEBUG) console.log("[", node.id, "]   > upstreamNode: ", upstreamNode);
 
     if (upstreamNode.type === "Reroute") {
