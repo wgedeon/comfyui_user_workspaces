@@ -56,9 +56,8 @@ class fot_Workspace:
             }
         }
 
-    RETURN_TYPES = ("WORKSPACE", "STRING", "INT", "INT",)
-    RETURN_NAMES = ("workspace", "codename", "width", "height",)
-    OUTPUT_IS_LIST = (False, False, False, False)
+    RETURN_TYPES = ("WORKSPACE", "STRING", "STRING", "INT", "INT",)
+    RETURN_NAMES = ("workspace", "codename", "full_path", "width", "height",)
     OUTPUT_NODE = True
 
     CATEGORY = CATEGORY
@@ -108,10 +107,12 @@ class fot_Workspace:
             }
             workspace_json_object_tostore = True
 
+        workspace_json_object["full_path"] = workspace_dir
+
         # if (not "width" in workspace_json_object) or (width != workspace_json_object["width"]):
         print(f" - updating width: {width}")
         workspace_json_object["width"] = width
-        workspace_json_object_tostore = True
+        # workspace_json_object_tostore = True
         # if (not "height" in workspace_json_object) or (height != workspace_json_object["height"]):
         print(f" - updating height: {height}")
         workspace_json_object["height"] = height
@@ -128,6 +129,7 @@ class fot_Workspace:
         return (
             workspace_json_object,
             workspace_json_object["codename"],
+            workspace_json_object["full_path"],
             workspace_json_object["width"],
             workspace_json_object["height"],
         )

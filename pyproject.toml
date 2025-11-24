@@ -1,7 +1,7 @@
 [project]
 name = "comfyui_user_workspaces"
-description = "Provides a structured model and helper nodes for producing long video sequences on ComfyUI using low vram machines."
-version = "0.1.0-inprogress"
+description = "Provides a structured model and helper nodes for organizing output files in ComfyUI."
+version = "1.0.0"
 license = { file = "LICENSE" }
 dependencies = ["python_path"]
 
@@ -10,5 +10,5 @@ Repository = "https://github.com/wgedeon/comfyui_user_workspaces"
 
 [tool.comfy]
 PublisherId = "felleroftrees"
-DisplayName = "comfyui_user_workspaces"
+DisplayName = "ComfyUI Workspaces"
 Icon = ""
