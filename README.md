@@ -15,15 +15,19 @@ your ComfyUI workflow.
 
 ## 🚀 Installation
 
+This node's features will only be useful when its name starts with
+underscore, so i cannot deploy to comfyui registry, git clone updates only for now.
+
 ### Method 1: Via ComfyUI Manager
 1. Install ComfyUI Manager
-2. Search for "ComfyUI Workspaces"
-3. Install and restart
+<!-- 2. Search for "ComfyUI Workspaces"
+3. Install and restart -->
+TODO use git url
 
 ### Method 2: Manual Installation
 ```bash
 cd custom_nodes
-git clone https://github.com/wgedeon/comfyui_user_workspaces.git
+git clone https://github.com/wgedeon/_comfyui_user_workspaces.git
 ```
 
 ## 🛠️ How to Use

@@ -13,6 +13,7 @@ from PIL import Image, ImageOps, ImageSequence
 from PIL.PngImagePlugin import PngInfo
 import numpy as np
 import hashlib
+import comfy.sd
 
 CATEGORY = "Feller of Trees/Workspaces"
 
@@ -52,6 +53,7 @@ class fot_Workspace:
         return {
             "required": {
                 "codename": (get_wksp_list(), {"default": WORKSPACE_DEFAULT}),
+                "ckpt_name": (folder_paths.get_filename_list("checkpoints"), {"tooltip": "The name of the checkpoint (model) to load."}),
                 "width": ("INT", {"default": 640}),
                 "height": ("INT", {"default": 480}),
             },
@@ -63,14 +65,14 @@ class fot_Workspace:
             }
         }
 
-    RETURN_TYPES = ("WORKSPACE", "STRING", "STRING", "INT", "INT",)
-    RETURN_NAMES = ("workspace", "codename", "full_path", "width", "height",)
+    RETURN_TYPES = ("WORKSPACE", "STRING", "STRING", "MODEL", "CLIP", "VAE", "INT", "INT",)
+    RETURN_NAMES = ("workspace", "codename", "full_path", "model", "clip", "vae", "width", "height",)
     OUTPUT_NODE = True
 
     CATEGORY = CATEGORY
 
     FUNCTION = "construct_data"
-    def construct_data(self, codename=None, codename_override=None, width=640, height=480, **kwargs):
+    def construct_data(self, codename, ckpt_name, width, height, codename_override=None, **kwargs):
         print("fot_Workspace constructing data")
 
         print(f" - width = {width}")
@@ -109,8 +111,9 @@ class fot_Workspace:
         if workspace_json_object is None:
             workspace_json_object = {
                 "codename": actual_codename,
-                "width": width,
-                "height": height
+                # "ckpt_name": ckpt_name,
+                # "width": width,
+                # "height": height
             }
             workspace_json_object_tostore = True
 
@@ -125,6 +128,8 @@ class fot_Workspace:
         workspace_json_object["height"] = height
         workspace_json_object_tostore = True
 
+        workspace_json_object["ckpt_name"] = ckpt_name
+
         if workspace_json_object_tostore:
             try:
                 with open(workspace_json_filename, 'w') as f:
@@ -133,10 +138,17 @@ class fot_Workspace:
             except IOError as e:
                 print(f" - Error saving workspace.json: {e}")
 
+        ckpt_path = folder_paths.get_full_path_or_raise("checkpoints", workspace_json_object["ckpt_name"])
+        out = comfy.sd.load_checkpoint_guess_config(ckpt_path, output_vae=True, output_clip=True, embedding_directory=folder_paths.get_folder_paths("embeddings"))
+        model, clip, vae = out[:3]
+
         return (
             workspace_json_object,
             workspace_json_object["codename"],
             workspace_json_object["full_path"],
+            model,
+            clip,
+            vae,
             workspace_json_object["width"],
             workspace_json_object["height"],
         )
@@ -172,8 +184,8 @@ class fot_WorkspaceReadOnly:
 
         return inputs
 
-    RETURN_TYPES = ("WORKSPACE", "STRING", "INT", "INT", )
-    RETURN_NAMES = ("workspace", "codename", "width", "height", )
+    RETURN_TYPES = ("WORKSPACE", "STRING", "MODEL", "CLIP", "VAE", "INT", "INT", )
+    RETURN_NAMES = ("workspace", "codename", "model", "clip", "vae", "width", "height", )
     OUTPUT_NODE = True
 
     CATEGORY = CATEGORY
@@ -210,12 +222,17 @@ class fot_WorkspaceReadOnly:
         else:
             workspace_json_object = workspace
 
+        ckpt_path = folder_paths.get_full_path_or_raise("checkpoints", workspace_json_object["ckpt_name"])
+        out = comfy.sd.load_checkpoint_guess_config(ckpt_path, output_vae=True, output_clip=True, embedding_directory=folder_paths.get_folder_paths("embeddings"))
+        model, clip, vae = out[:3]
+
         return {
             "ui": {
                 "workspace": (workspace_json_object,) },
                 "result": (
                     workspace_json_object,
                     workspace_json_object["codename"],
+                    model, clip, vae,
                     workspace_json_object["width"],
                     workspace_json_object["height"],
                 )
